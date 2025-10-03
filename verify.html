@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#10B981" />
+    <title data-fa="تأیید ثبت‌نام" data-en="Registration Verification">تأیید ثبت‌نام</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="/styles.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans">
+    <nav id="navbar" class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-10">
+        <div id="nav-container" class="container mx-auto flex justify-between items-center">
+            <h1 id="nav-title" class="text-xl font-semibold" data-fa="سیستم مدیریت توریست" data-en="Tourist Management System">سیستم مدیریت توریست</h1>
+            <div id="nav-links" class="flex space-x-4 space-x-reverse items-center">
+                <a href="/register.html" id="register-link" class="hover:bg-green-700 px-3 py-2 rounded" data-fa="ثبت‌نام" data-en="Register">ثبت‌نام</a>
+                <button id="langToggle" class="bg-white text-green-600 px-3 py-1 rounded">EN</button>
+            </div>
+        </div>
+    </nav>
+    <div class="container mx-auto p-6">
+        <h2 id="page-title" class="text-2xl font-semibold text-green-800 mb-6 text-center" data-fa="تأیید ثبت‌نام" data-en="Registration Verification">تأیید ثبت‌نام</h2>
+        <section>
+            <div class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+                <p id="instruction" class="text-gray-700 mb-4" data-fa="کد ۴ رقمی ارسال‌شده به ایمیل خود را وارد کنید." data-en="Enter the 4-digit code sent to your email.">کد ۴ رقمی ارسال‌شده به ایمیل خود را وارد کنید.</p>
+                <form id="verifyForm" class="space-y-4">
+                    <div>
+                        <label for="code" id="code-label" class="block text-gray-700" data-fa="کد تأیید:" data-en="Verification Code:">کد تأیید:</label>
+                        <input type="text" id="code" class="w-full p-2 border rounded" required />
+                    </div>
+                    <button type="submit" id="submit-btn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full" data-fa="تأیید" data-en="Verify">تأیید</button>
+                </form>
+            </div>
+        </section>
+    </div>
+    <script>
+        let lang = localStorage.getItem('lang') || 'fa';
+        const toggleBtn = document.getElementById('langToggle');
+
+        const texts = {
+            unauthorized: { fa: 'دسترسی غیرمجاز', en: 'Unauthorized access' },
+            verifySuccess: { fa: 'تأیید با موفقیت انجام شد.', en: 'Verification successful.' },
+            verifyError: { fa: 'خطا در تأیید: ', en: 'Verification error: ' },
+            serverError: { fa: 'خطا در ارتباط با سرور.', en: 'Server connection error.' }
+        };
+
+        function updateLanguage() {
+            document.querySelectorAll('[data-fa]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${lang}`);
+            });
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+            toggleBtn.textContent = lang === 'fa' ? 'EN' : 'FA';
+            const navLinks = document.getElementById('nav-links');
+            if (lang === 'en') {
+                navLinks.classList.remove('space-x-reverse');
+                navLinks.classList.add('space-x-4');
+            } else {
+                navLinks.classList.remove('space-x-4');
+                navLinks.classList.add('space-x-reverse');
+            }
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            lang = lang === 'fa' ? 'en' : 'fa';
+            localStorage.setItem('lang', lang);
+            updateLanguage();
+        });
+
+        updateLanguage();
+
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user || !user.id) {
+            alert(texts.unauthorized[lang]);
+            window.location.href = '/';
+        }
+
+        document.getElementById('verifyForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const code = document.getElementById('code').value;
+            fetch('/verify', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ userId: user.id, code })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert(texts.verifySuccess[lang]);
+                    window.location.href = user.role == 'doctor' ? 'doctor-specialty.html' : `/dashboard-${user.role}.html`;
+                } else {
+                    alert(texts.verifyError[lang] + data.error);
+                }
+            })
+            .catch(err => {
+                console.error('Error during verification:', err);
+                alert(texts.serverError[lang]);
+            });
+        });
+    </script>
+</body>
+</html>

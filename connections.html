@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#10B981" />
+    <title data-lang="title">ارتباطات</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="/styles.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans">
+    <nav class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-semibold" data-lang="system-name">سیستم مدیریت توریست</h1>
+            <div class="flex space-x-4 space-x-reverse">
+                <a href="/dashboard-admin.html" class="hover:bg-green-700 px-3 py-2 rounded" data-lang="dashboard">داشبورد</a>
+                <a href="/messages.html" class="hover:bg-green-700 px-3 py-2 rounded" data-lang="messages">پیام‌ها</a>
+                <a href="/users-list.html" class="hover:bg-green-700 px-3 py-2 rounded" data-lang="users-list">لیست کاربران</a>
+                <a href="/" class="hover:bg-red-700 px-3 py-2 rounded" data-lang="logout">خروج</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold text-green-800 mb-6 text-center" data-lang="communications">ارتباطات</h2>
+        <section class="mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" data-lang="tourist-rep-connections">ارتباطات توریست-نماینده</h3>
+                <table class="w-full text-right">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="p-2" data-lang="tourist-name">نام توریست</th>
+                            <th class="p-2" data-lang="rep-name">نام نماینده</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tourist-rep-connections" class="space-y-2"></tbody>
+                </table>
+            </div>
+        </section>
+        <section>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" data-lang="rep-doctor-connections">ارتباطات نماینده-دکتر</h3>
+                <table class="w-full text-right">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="p-2" data-lang="rep-name">نام نماینده</th>
+                            <th class="p-2" data-lang="doctor-name">نام پزشک</th>
+                            <th class="p-2" data-lang="appointment-time">زمان ملاقات</th>
+                        </tr>
+                    </thead>
+                    <tbody id="rep-doctor-connections" class="space-y-2"></tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+    <script>
+        const translations = {
+            en: {
+                title: "Communications",
+                "system-name": "Tourist Management System",
+                dashboard: "Dashboard",
+                messages: "Messages",
+                "users-list": "Users List",
+                logout: "Logout",
+                communications: "Communications",
+                "tourist-rep-connections": "Tourist-Representative Connections",
+                "tourist-name": "Tourist Name",
+                "rep-name": "Representative Name",
+                "rep-doctor-connections": "Representative-Doctor Connections",
+                "doctor-name": "Doctor Name",
+                "appointment-time": "Appointment Time",
+                "no-connections": "No connections found.",
+                "unauthorized-access": "Unauthorized access",
+                "error-loading-tourist": "Error loading tourist connections.",
+                "error-loading-doctor": "Error loading doctor connections.",
+                "unknown": "Unknown"
+            },
+            fa: {
+                title: "ارتباطات",
+                "system-name": "سیستم مدیریت توریست",
+                dashboard: "داشبورد",
+                messages: "پیام‌ها",
+                "users-list": "لیست کاربران",
+                logout: "خروج",
+                communications: "ارتباطات",
+                "tourist-rep-connections": "ارتباطات توریست-نماینده",
+                "tourist-name": "نام توریست",
+                "rep-name": "نام نماینده",
+                "rep-doctor-connections": "ارتباطات نماینده-دکتر",
+                "doctor-name": "نام پزشک",
+                "appointment-time": "زمان ملاقات",
+                "no-connections": "هیچ ارتباطی وجود ندارد.",
+                "unauthorized-access": "دسترسی غیرمجاز",
+                "error-loading-tourist": "خطا در بارگذاری ارتباطات توریست.",
+                "error-loading-doctor": "خطا در بارگذاری ارتباطات دکتر.",
+                "unknown": "نامشخص"
+            }
+        };
+
+        function setLanguage(lang) {
+            // Set lang attribute and dir attribute based on language
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+
+            // Translate elements with data-lang attribute
+            document.querySelectorAll("[data-lang]").forEach(el => {
+                const key = el.getAttribute("data-lang");
+                if (translations[lang] && translations[lang][key]) {
+                    el.textContent = translations[lang][key];
+                }
+            });
+
+            // Adjust table text alignment
+            document.querySelectorAll("table").forEach(table => {
+                table.style.textAlign = lang === 'fa' ? "right" : "left";
+            });
+
+            // Adjust body direction class for tailwind if needed
+            if (lang === 'fa') {
+                document.body.classList.add('rtl');
+                document.body.classList.remove('ltr');
+            } else {
+                document.body.classList.add('ltr');
+                document.body.classList.remove('rtl');
+            }
+        }
+
+        // Default language
+        let currentLang = 'fa';
+
+        // Add language toggle UI
+        const nav = document.querySelector('nav .container');
+        const langToggle = document.createElement('div');
+        langToggle.className = 'flex space-x-2 space-x-reverse items-center cursor-pointer select-none';
+        langToggle.innerHTML = `
+            <span id="lang-fa" class="px-2 py-1 rounded bg-white text-green-700 font-semibold border border-green-700">فارسی</span>
+            <span id="lang-en" class="px-2 py-1 rounded hover:bg-white hover:text-green-700 border border-green-700 text-white">English</span>
+        `;
+        nav.appendChild(langToggle);
+
+        function updateLangToggleUI() {
+            document.getElementById('lang-fa').classList.toggle('bg-white', currentLang === 'fa');
+            document.getElementById('lang-fa').classList.toggle('text-green-700', currentLang === 'fa');
+            document.getElementById('lang-fa').classList.toggle('text-white', currentLang !== 'fa');
+            document.getElementById('lang-fa').classList.toggle('hover:bg-white', currentLang !== 'fa');
+
+            document.getElementById('lang-en').classList.toggle('bg-white', currentLang === 'en');
+            document.getElementById('lang-en').classList.toggle('text-green-700', currentLang === 'en');
+            document.getElementById('lang-en').classList.toggle('text-white', currentLang !== 'en');
+            document.getElementById('lang-en').classList.toggle('hover:bg-white', currentLang !== 'en');
+        }
+
+        document.getElementById('lang-fa').addEventListener('click', () => {
+            if (currentLang !== 'fa') {
+                currentLang = 'fa';
+                setLanguage('fa');
+                updateLangToggleUI();
+            }
+        });
+        document.getElementById('lang-en').addEventListener('click', () => {
+            if (currentLang !== 'en') {
+                currentLang = 'en';
+                setLanguage('en');
+                updateLangToggleUI();
+            }
+        });
+
+        document.addEventListener('DOMContentLoaded', () => {
+            setLanguage(currentLang);
+            updateLangToggleUI();
+
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || (user.role !== 'admin' && user.role !== 'subadmin')) {
+                alert(translations[currentLang]['unauthorized-access']);
+                window.location.href = '/';
+                return;
+            }
+
+            // Fetch tourist-representative connections
+            fetch('/get-tourist-connections')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('tourist-rep-connections');
+                    tbody.innerHTML = '';
+                    if (data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="2" class="p-2 text-gray-500 text-center">${translations[currentLang]['no-connections']}</td></tr>`;
+                    } else {
+                        data.forEach(conn => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `<td class="p-2">${conn.touristName}</td><td class="p-2">${conn.repName}</td>`;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error('Error loading tourist connections:', err);
+                    alert(translations[currentLang]['error-loading-tourist']);
+                });
+
+            // Fetch representative-doctor connections
+            fetch('/get-doctor-connections')
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('rep-doctor-connections');
+                    tbody.innerHTML = '';
+                    if (data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="3" class="p-2 text-gray-500 text-center">${translations[currentLang]['no-connections']}</td></tr>`;
+                    } else {
+                        data.forEach(conn => {
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `<td class="p-2">${conn.repName}</td><td class="p-2">${conn.doctorName}</td><td class="p-2">${conn.appointment_time || translations[currentLang]['unknown']}</td>`;
+                            tbody.appendChild(tr);
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error('Error loading doctor connections:', err);
+                    alert(translations[currentLang]['error-loading-doctor']);
+                });
+        });
+    </script>
+</body>
+</html>

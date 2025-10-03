@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#10B981" />
+    <title>انتخاب نماینده</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans">
+    <div class="container mx-auto p-6">
+        <div class="flex justify-between items-center mb-6">
+            <h1 class="text-2xl font-semibold text-green-800" data-lang-fa="انتخاب نماینده" data-lang-en="Select Representative">انتخاب نماینده</h1>
+            <div>
+                <a href="/dashboard-tourist.html" class="text-green-600 hover:underline mx-2" data-lang-fa="بازگشت به داشبورد" data-lang-en="Back to Dashboard">بازگشت به داشبورد</a>
+                <a href="/" class="text-red-600 hover:underline mx-2" data-lang-fa="خروج" data-lang-en="Logout">خروج</a>
+            </div>
+        </div>
+        <form id="selectRepForm" class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+            <div class="mb-4">
+                <label for="representative" class="block text-gray-700" data-lang-fa="نماینده:" data-lang-en="Representative:">نماینده:</label>
+                <select id="representative" class="w-full p-2 border rounded" required>
+                    <option value="" disabled selected data-lang-fa="یک نماینده انتخاب کنید" data-lang-en="Select a representative">یک نماینده انتخاب کنید</option>
+                </select>
+            </div>
+            <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700" data-lang-fa="ارسال درخواست" data-lang-en="Send Request">ارسال درخواست</button>
+        </form>
+        <div class="mt-4 text-gray-600">
+            <a href="/select-representative.html?lang=en" class="text-green-600 hover:underline" data-lang-fa="EN" data-lang-en="EN">EN</a>
+        </div>
+    </div>
+    <script src="/select-rep-script.js"></script>
+    <script>
+      // Simple language switch based on URL param lang
+      function setLanguage(lang) {
+        document.documentElement.lang = lang;
+        document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
+        document.querySelectorAll('[data-lang-fa]').forEach(el => {
+          el.textContent = (lang === 'fa') ? el.getAttribute('data-lang-fa') : el.getAttribute('data-lang-en');
+        });
+      }
+      const urlParams = new URLSearchParams(window.location.search);
+      const lang = urlParams.get('lang') || 'fa';
+      setLanguage(lang);
+    </script>
+</body>
+</html>

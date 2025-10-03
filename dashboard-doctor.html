@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#10B981" />
+    <title>داشبورد دکتر | Doctor Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="/styles.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans" data-lang="fa" dir="rtl">
+    <nav class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-semibold" id="site-title">سیستم مدیریت توریست</h1>
+            <div class="flex space-x-4 space-x-reverse">
+                <button id="btn-fa" class="hover:bg-green-700 px-3 py-2 rounded bg-green-800">FA</button>
+                <button id="btn-en" class="hover:bg-green-700 px-3 py-2 rounded">EN</button>
+                <a href="/" id="logout-link" class="hover:bg-red-700 px-3 py-2 rounded">خروج</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold text-green-800 mb-6 text-center" id="dashboard-title">داشبورد دکتر</h2>
+
+        <section class="mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" id="accepted-reps-title">نمایندگان پذیرفته‌شده</h3>
+                <ul id="accepted-reps" class="space-y-2"></ul>
+            </div>
+        </section>
+
+        <section class="mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" id="requests-title">درخواست‌های نمایندگان</h3>
+                <ul id="requests-list" class="space-y-2"></ul>
+            </div>
+        </section>
+
+        <section>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" id="messages-title">پیام‌ها</h3>
+                <ul id="messages-list" class="space-y-2"></ul>
+                <button onclick="contactAdmin()" id="contact-admin-btn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-4">ارسال پیام به مدیر</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const translations = {
+            fa: {
+                dir: "rtl",
+                siteTitle: "سیستم مدیریت توریست",
+                logout: "خروج",
+                dashboardTitle: "داشبورد دکتر",
+                acceptedRepsTitle: "نمایندگان پذیرفته‌شده",
+                requestsTitle: "درخواست‌های نمایندگان",
+                messagesTitle: "پیام‌ها",
+                contactAdminBtn: "ارسال پیام به مدیر",
+            },
+            en: {
+                dir: "ltr",
+                siteTitle: "Tourist Management System",
+                logout: "Logout",
+                dashboardTitle: "Doctor Dashboard",
+                acceptedRepsTitle: "Accepted Representatives",
+                requestsTitle: "Representatives' Requests",
+                messagesTitle: "Messages",
+                contactAdminBtn: "Send Message to Admin",
+            }
+        };
+
+        function setLanguage(lang) {
+            const t = translations[lang];
+            document.documentElement.lang = lang;
+            document.body.setAttribute("dir", t.dir);
+            document.body.dataset.lang = lang;
+
+            document.getElementById("site-title").textContent = t.siteTitle;
+            document.getElementById("logout-link").textContent = t.logout;
+            document.getElementById("dashboard-title").textContent = t.dashboardTitle;
+            document.getElementById("accepted-reps-title").textContent = t.acceptedRepsTitle;
+            document.getElementById("requests-title").textContent = t.requestsTitle;
+            document.getElementById("messages-title").textContent = t.messagesTitle;
+            document.getElementById("contact-admin-btn").textContent = t.contactAdminBtn;
+
+            // Adjust nav buttons styling for active language
+            document.getElementById("btn-fa").classList.toggle("bg-green-800", lang === "fa");
+            document.getElementById("btn-en").classList.toggle("bg-green-800", lang === "en");
+        }
+
+        document.getElementById("btn-fa").addEventListener("click", () => setLanguage("fa"));
+        document.getElementById("btn-en").addEventListener("click", () => setLanguage("en"));
+
+        // On load, detect saved language or default to Persian
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedLang = localStorage.getItem("lang") || "fa";
+            setLanguage(savedLang);
+        });
+
+        // Save lang choice to localStorage
+        function setLanguage(lang) {
+            localStorage.setItem("lang", lang);
+            const t = translations[lang];
+            document.documentElement.lang = lang;
+            document.body.setAttribute("dir", t.dir);
+            document.body.dataset.lang = lang;
+
+            document.getElementById("site-title").textContent = t.siteTitle;
+            document.getElementById("logout-link").textContent = t.logout;
+            document.getElementById("dashboard-title").textContent = t.dashboardTitle;
+            document.getElementById("accepted-reps-title").textContent = t.acceptedRepsTitle;
+            document.getElementById("requests-title").textContent = t.requestsTitle;
+            document.getElementById("messages-title").textContent = t.messagesTitle;
+            document.getElementById("contact-admin-btn").textContent = t.contactAdminBtn;
+
+            document.getElementById("btn-fa").classList.toggle("bg-green-800", lang === "fa");
+            document.getElementById("btn-en").classList.toggle("bg-green-800", lang === "en");
+        }
+
+        // Placeholder contactAdmin function (you can customize it)
+        function contactAdmin() {
+            if (document.body.dataset.lang === "fa") {
+                alert("پیام به مدیر ارسال شد.");
+            } else {
+                alert("Message sent to admin.");
+            }
+        }
+    </script>
+    <script src="/doctor-script.js"></script>
+</body>
+</html>

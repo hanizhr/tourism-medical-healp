@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="role.title">انتخاب نقش</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1 data-i18n="role.title">انتخاب نقش</h1>
+        <form id="roleForm">
+            <select id="role" required>
+                <option value="" data-i18n="role.select">انتخاب کنید</option>
+                <option value="tourist" data-i18n="role.tourist">توریست</option>
+                <option value="representative" data-i18n="role.representative">نماینده</option>
+                <option value="doctor" data-i18n="role.doctor">دکتر</option>
+                <option value="admin" data-i18n="role.admin">مدیر</option>
+            </select>
+            <button type="submit" data-i18n="role.continue">ادامه</button>
+        </form>
+        <button id="langSwitch" class="mt-4 bg-gray-200 px-3 py-1 rounded">EN</button>
+    </div>
+
+    <script>
+        // ترجمه‌ها
+        const translations = {
+            fa: {
+                role: {
+                    title: "انتخاب نقش",
+                    select: "انتخاب کنید",
+                    tourist: "توریست",
+                    representative: "نماینده",
+                    doctor: "دکتر",
+                    admin: "مدیر",
+                    continue: "ادامه"
+                }
+            },
+            en: {
+                role: {
+                    title: "Select Role",
+                    select: "Choose",
+                    tourist: "Tourist",
+                    representative: "Representative",
+                    doctor: "Doctor",
+                    admin: "Admin",
+                    continue: "Continue"
+                }
+            }
+        };
+
+        let currentLang = localStorage.getItem('lang') || 'fa';
+
+        function updateTexts() {
+            document.querySelectorAll('[data-i18n]').forEach(el => {
+                const keys = el.getAttribute('data-i18n').split('.');
+                let text = translations[currentLang];
+                keys.forEach(k => text = text[k]);
+                el.textContent = text;
+            });
+            document.getElementById('langSwitch').textContent = currentLang === 'fa' ? 'EN' : 'FA';
+        }
+
+        function switchLang() {
+            currentLang = currentLang === 'fa' ? 'en' : 'fa';
+            localStorage.setItem('lang', currentLang);
+            updateTexts();
+        }
+
+        document.getElementById('langSwitch').addEventListener('click', switchLang);
+        updateTexts();
+
+        document.getElementById('roleForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const role = document.getElementById('role').value;
+            console.log('Selected role:', role);
+
+            if (!role) {
+                alert(currentLang === 'fa' ? "لطفاً نقش را انتخاب کنید" : "Please select a role");
+                return;
+            }
+
+            const user = JSON.parse(localStorage.getItem('user')) || {};
+            fetch('/update-role', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ mobile: user.mobile, role })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    user.role = role;
+                    localStorage.setItem('user', JSON.stringify(user));
+
+                    if (role === 'doctor') window.location.href = 'doctor-specialty.html';
+                    else if (role === 'representative') window.location.href = 'representative-email.html';
+                    else window.location.href = `dashboard-${role}.html`;
+                } else {
+                    console.error("Update failed:", data);
+                }
+            })
+            .catch(err => console.error("Fetch error:", err));
+        });
+    </script>
+</body>
+</html>

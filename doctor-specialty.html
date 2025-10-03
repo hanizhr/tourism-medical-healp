@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#10B981" />
+  <title>انتخاب تخصص</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="/styles.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans" data-lang="fa" dir="rtl">
+  <nav class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-10">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-semibold" id="site-title">سیستم مدیریت توریست</h1>
+      <div class="flex space-x-4 space-x-reverse">
+        <a href="/dashboard-doctor.html" id="dashboard-link" class="hover:bg-green-700 px-3 py-2 rounded">داشبورد</a>
+        <a href="/" id="logout-link" class="hover:bg-red-700 px-3 py-2 rounded">خروج</a>
+        <button id="btn-fa" class="hover:bg-green-700 px-3 py-2 rounded bg-green-800">FA</button>
+        <button id="btn-en" class="hover:bg-green-700 px-3 py-2 rounded">EN</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mx-auto p-6">
+    <h2 class="text-2xl font-semibold text-green-800 mb-6 text-center" id="form-title">انتخاب تخصص</h2>
+    <section>
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <form id="specialtyForm" class="space-y-4">
+          <div>
+            <label for="specialty" class="block text-gray-700" id="specialty-label">تخصص:</label>
+            <input type="text" id="specialty" class="w-full p-2 border rounded" required />
+          </div>
+          <div>
+            <label for="resume" class="block text-gray-700" id="resume-label">رزومه:</label>
+            <textarea id="resume" class="w-full p-2 border rounded" required></textarea>
+          </div>
+          <button type="submit" id="save-btn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700">ذخیره و ادامه</button>
+        </form>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const translations = {
+      fa: {
+        dir: "rtl",
+        siteTitle: "سیستم مدیریت توریست",
+        dashboard: "داشبورد",
+        logout: "خروج",
+        formTitle: "انتخاب تخصص",
+        specialtyLabel: "تخصص:",
+        resumeLabel: "رزومه:",
+        saveBtn: "ذخیره و ادامه",
+        success: "تخصص و رزومه با موفقیت ذخیره شد.",
+        error: "خطا در ذخیره تخصص و رزومه.",
+        serverError: "خطا در ارتباط با سرور.",
+        unauthorized: "دسترسی غیرمجاز",
+      },
+      en: {
+        dir: "ltr",
+        siteTitle: "Tourist Management System",
+        dashboard: "Dashboard",
+        logout: "Logout",
+        formTitle: "Select Specialty",
+        specialtyLabel: "Specialty:",
+        resumeLabel: "Resume:",
+        saveBtn: "Save and Continue",
+        success: "Specialty and resume saved successfully.",
+        error: "Error saving specialty and resume.",
+        serverError: "Server communication error.",
+        unauthorized: "Unauthorized access",
+      }
+    };
+
+    function setLanguage(lang) {
+      localStorage.setItem("lang", lang);
+      const t = translations[lang];
+
+      document.documentElement.lang = lang;
+      document.body.setAttribute("dir", t.dir);
+      document.body.dataset.lang = lang;
+
+      // Update text content
+      document.getElementById("site-title").textContent = t.siteTitle;
+      document.getElementById("dashboard-link").textContent = t.dashboard;
+      document.getElementById("logout-link").textContent = t.logout;
+      document.getElementById("form-title").textContent = t.formTitle;
+      document.getElementById("specialty-label").textContent = t.specialtyLabel;
+      document.getElementById("resume-label").textContent = t.resumeLabel;
+      document.getElementById("save-btn").textContent = t.saveBtn;
+
+      // Active button styling
+      document.getElementById("btn-fa").classList.toggle("bg-green-800", lang === "fa");
+      document.getElementById("btn-en").classList.toggle("bg-green-800", lang === "en");
+    }
+
+    document.getElementById("btn-fa").addEventListener("click", () => setLanguage("fa"));
+    document.getElementById("btn-en").addEventListener("click", () => setLanguage("en"));
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const user = JSON.parse(localStorage.getItem("user"));
+      const lang = localStorage.getItem("lang") || "fa";
+      const t = translations[lang];
+
+      setLanguage(lang);
+
+      if (!user || user.role !== "doctor") {
+        alert(t.unauthorized);
+        window.location.href = "/";
+        return;
+      }
+
+      document.getElementById("specialtyForm").addEventListener("submit", function (e) {
+        e.preventDefault();
+        const specialty = document.getElementById("specialty").value;
+        const resume = document.getElementById("resume").value;
+
+        fetch("/update-specialty", {
+          method: "POST",
+          headers: { "Content-Type": "application/json" },
+          body: JSON.stringify({ mobile: user.mobile, specialty, resume })
+        })
+          .then((res) => res.json())
+          .then((data) => {
+            if (data.success) {
+              alert(t.success);
+              window.location.href = "/dashboard-doctor.html";
+            } else {
+              alert(t.error);
+            }
+          })
+          .catch((err) => {
+            console.error("Error updating specialty:", err);
+            alert(t.serverError);
+          });
+      });
+    });
+  </script>
+</body>
+</html>

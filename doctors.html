@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#10B981" />
+  <title>دکترها</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+  <link href="/styles.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans" data-lang="fa" dir="rtl">
+  <nav class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-10">
+    <div class="container mx-auto flex justify-between items-center">
+      <h1 class="text-xl font-semibold" id="site-title">سیستم مدیریت توریست</h1>
+      <div class="flex space-x-4 space-x-reverse">
+        <a href="/dashboard-representative.html" id="dashboard-link" class="hover:bg-green-700 px-3 py-2 rounded">داشبورد</a>
+        <a href="/requests.html" id="requests-link" class="hover:bg-green-700 px-3 py-2 rounded">درخواست‌ها</a>
+        <a href="/" id="logout-link" class="hover:bg-red-700 px-3 py-2 rounded">خروج</a>
+        <button id="btn-fa" class="hover:bg-green-700 px-3 py-2 rounded bg-green-800">FA</button>
+        <button id="btn-en" class="hover:bg-green-700 px-3 py-2 rounded">EN</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="container mx-auto p-6">
+    <h2 class="text-2xl font-semibold text-green-800 mb-6 text-center" id="page-title">دکترها</h2>
+    <section class="mb-6">
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-green-800 mb-4" id="doctors-title">دکترها</h3>
+        <ul id="doctors-list" class="space-y-2"></ul>
+      </div>
+    </section>
+    <section>
+      <div class="bg-white rounded-lg shadow-md p-6">
+        <h3 class="text-lg font-semibold text-green-800 mb-4" id="requests-status-title">وضعیت درخواست‌های ارسالی به دکترها</h3>
+        <ul id="sent-doc-requests" class="space-y-2"></ul>
+      </div>
+    </section>
+  </div>
+
+  <script>
+    const translations = {
+      fa: {
+        dir: "rtl",
+        siteTitle: "سیستم مدیریت توریست",
+        dashboard: "داشبورد",
+        requests: "درخواست‌ها",
+        logout: "خروج",
+        pageTitle: "دکترها",
+        doctorsTitle: "دکترها",
+        requestsStatusTitle: "وضعیت درخواست‌های ارسالی به دکترها",
+      },
+      en: {
+        dir: "ltr",
+        siteTitle: "Tourist Management System",
+        dashboard: "Dashboard",
+        requests: "Requests",
+        logout: "Logout",
+        pageTitle: "Doctors",
+        doctorsTitle: "Doctors",
+        requestsStatusTitle: "Status of Sent Requests to Doctors",
+      }
+    };
+
+    function setLanguage(lang) {
+      localStorage.setItem("lang", lang);
+      const t = translations[lang];
+      document.documentElement.lang = lang;
+      document.body.setAttribute("dir", t.dir);
+      document.body.dataset.lang = lang;
+
+      document.getElementById("site-title").textContent = t.siteTitle;
+      document.getElementById("dashboard-link").textContent = t.dashboard;
+      document.getElementById("requests-link").textContent = t.requests;
+      document.getElementById("logout-link").textContent = t.logout;
+      document.getElementById("page-title").textContent = t.pageTitle;
+      document.getElementById("doctors-title").textContent = t.doctorsTitle;
+      document.getElementById("requests-status-title").textContent = t.requestsStatusTitle;
+
+      document.getElementById("btn-fa").classList.toggle("bg-green-800", lang === "fa");
+      document.getElementById("btn-en").classList.toggle("bg-green-800", lang === "en");
+    }
+
+    document.getElementById("btn-fa").addEventListener("click", () => setLanguage("fa"));
+    document.getElementById("btn-en").addEventListener("click", () => setLanguage("en"));
+
+    document.addEventListener("DOMContentLoaded", () => {
+      const lang = localStorage.getItem("lang") || "fa";
+      setLanguage(lang);
+    });
+  </script>
+  <script src="/rep-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,132 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#10B981" />
+    <title>داشبورد توریست | Tourist Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="/styles.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans" data-lang="fa" dir="rtl">
+    <nav class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-semibold" id="site-title">سیستم مدیریت توریست</h1>
+            <div class="flex space-x-4 space-x-reverse">
+                <button id="btn-fa" class="hover:bg-green-700 px-3 py-2 rounded bg-green-800">FA</button>
+                <button id="btn-en" class="hover:bg-green-700 px-3 py-2 rounded">EN</button>
+                <a href="/" id="logout-link" class="hover:bg-red-700 px-3 py-2 rounded">خروج</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold text-green-800 mb-6 text-center" id="dashboard-title">داشبورد توریست</h2>
+
+        <section class="mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" id="status-title">وضعیت درخواست</h3>
+                <p id="status" class="text-gray-700">در حال بارگذاری...</p>
+            </div>
+        </section>
+
+        <section class="mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" id="select-rep-title">انتخاب نماینده</h3>
+                <a href="/select-representative.html" id="select-rep-btn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 inline-block">انتخاب نماینده</a>
+            </div>
+        </section>
+
+        <section>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" id="send-message-title">ارسال پیام به مدیر</h3>
+                <form id="sendMessageForm" class="mb-4">
+                    <textarea id="message" class="w-full p-2 border rounded" placeholder="پیام خود را وارد کنید" required></textarea>
+                    <button type="submit" id="send-message-btn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-2">ارسال پیام</button>
+                </form>
+                <h3 class="text-lg font-semibold text-green-800 mb-4" id="messages-title">پیام‌ها</h3>
+                <div id="messagesList" class="space-y-4"></div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const translations = {
+            fa: {
+                dir: "rtl",
+                siteTitle: "سیستم مدیریت توریست",
+                logout: "خروج",
+                dashboardTitle: "داشبورد توریست",
+                statusTitle: "وضعیت درخواست",
+                statusLoading: "در حال بارگذاری...",
+                selectRepTitle: "انتخاب نماینده",
+                selectRepBtn: "انتخاب نماینده",
+                sendMessageTitle: "ارسال پیام به مدیر",
+                sendMessageBtn: "ارسال پیام",
+                messagesTitle: "پیام‌ها",
+                messagePlaceholder: "پیام خود را وارد کنید",
+                messageSent: "پیام به مدیر ارسال شد."
+            },
+            en: {
+                dir: "ltr",
+                siteTitle: "Tourist Management System",
+                logout: "Logout",
+                dashboardTitle: "Tourist Dashboard",
+                statusTitle: "Request Status",
+                statusLoading: "Loading...",
+                selectRepTitle: "Select Representative",
+                selectRepBtn: "Select Representative",
+                sendMessageTitle: "Send Message to Admin",
+                sendMessageBtn: "Send Message",
+                messagesTitle: "Messages",
+                messagePlaceholder: "Enter your message",
+                messageSent: "Message sent to admin."
+            }
+        };
+
+        function setLanguage(lang) {
+            localStorage.setItem("lang", lang);
+            const t = translations[lang];
+
+            document.documentElement.lang = lang;
+            document.body.setAttribute("dir", t.dir);
+            document.body.dataset.lang = lang;
+
+            document.getElementById("site-title").textContent = t.siteTitle;
+            document.getElementById("logout-link").textContent = t.logout;
+            document.getElementById("dashboard-title").textContent = t.dashboardTitle;
+            document.getElementById("status-title").textContent = t.statusTitle;
+            document.getElementById("status").textContent = t.statusLoading;
+            document.getElementById("select-rep-title").textContent = t.selectRepTitle;
+            document.getElementById("select-rep-btn").textContent = t.selectRepBtn;
+            document.getElementById("send-message-title").textContent = t.sendMessageTitle;
+            document.getElementById("send-message-btn").textContent = t.sendMessageBtn;
+            document.getElementById("messages-title").textContent = t.messagesTitle;
+            document.getElementById("message").placeholder = t.messagePlaceholder;
+
+            document.getElementById("btn-fa").classList.toggle("bg-green-800", lang === "fa");
+            document.getElementById("btn-en").classList.toggle("bg-green-800", lang === "en");
+        }
+
+        document.getElementById("btn-fa").addEventListener("click", () => setLanguage("fa"));
+        document.getElementById("btn-en").addEventListener("click", () => setLanguage("en"));
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedLang = localStorage.getItem("lang") || "fa";
+            setLanguage(savedLang);
+        });
+
+        document.getElementById("sendMessageForm").addEventListener("submit", function (e) {
+            e.preventDefault();
+            const lang = document.body.dataset.lang;
+            const msg = translations[lang].messageSent;
+            alert(msg);
+            this.reset();
+        });
+    </script>
+
+    <script src="/tourist-script.js"></script>
+</body>
+</html>
+```

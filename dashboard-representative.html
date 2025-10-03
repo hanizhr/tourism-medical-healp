@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#10B981" />
+    <title>داشبورد نماینده | Representative Dashboard</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="/styles.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans" data-lang="fa" dir="rtl">
+    <nav class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-semibold" id="site-title">سیستم مدیریت توریست</h1>
+            <div class="flex space-x-4 space-x-reverse">
+                <button id="btn-fa" class="hover:bg-green-700 px-3 py-2 rounded bg-green-800">FA</button>
+                <button id="btn-en" class="hover:bg-green-700 px-3 py-2 rounded">EN</button>
+                <a href="/requests.html" id="requests-link" class="hover:bg-green-700 px-3 py-2 rounded">درخواست‌ها</a>
+                <a href="/doctors.html" id="doctors-link" class="hover:bg-green-700 px-3 py-2 rounded">دکترها</a>
+                <a href="/" id="logout-link" class="hover:bg-red-700 px-3 py-2 rounded">خروج</a>
+            </div>
+        </div>
+    </nav>
+
+    <div class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold text-green-800 mb-6 text-center" id="dashboard-title">داشبورد نماینده</h2>
+
+        <section class="mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" id="accepted-tourists-title">توریست‌های پذیرفته‌شده</h3>
+                <ul id="accepted-tourists" class="space-y-2"></ul>
+            </div>
+        </section>
+
+        <section class="mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" id="tourist-requests-title">درخواست‌های توریست‌ها</h3>
+                <ul id="requests-list" class="space-y-2"></ul>
+            </div>
+        </section>
+
+        <section class="mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" id="my-doc-requests-title">درخواست‌های من به دکترها</h3>
+                <ul id="sent-doc-requests" class="space-y-2"></ul>
+            </div>
+        </section>
+
+        <section class="mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" id="doctors-title">دکترها</h3>
+                <ul id="doctors-list" class="space-y-2"></ul>
+            </div>
+        </section>
+
+        <section>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" id="messages-title">پیام‌ها</h3>
+                <ul id="messages-list" class="space-y-2"></ul>
+                <button onclick="contactAdmin()" id="contact-admin-btn" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 mt-4">ارسال پیام به مدیر</button>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const translations = {
+            fa: {
+                dir: "rtl",
+                siteTitle: "سیستم مدیریت توریست",
+                logout: "خروج",
+                dashboardTitle: "داشبورد نماینده",
+                requestsLink: "درخواست‌ها",
+                doctorsLink: "دکترها",
+                acceptedTouristsTitle: "توریست‌های پذیرفته‌شده",
+                touristRequestsTitle: "درخواست‌های توریست‌ها",
+                myDocRequestsTitle: "درخواست‌های من به دکترها",
+                doctorsTitle: "دکترها",
+                messagesTitle: "پیام‌ها",
+                contactAdminBtn: "ارسال پیام به مدیر",
+                msgSent: "پیام به مدیر ارسال شد.",
+                noAcceptedTourists: "هیچ توریستی پذیرفته نشده است.",
+                noRequests: "هیچ درخواستی وجود ندارد.",
+                noDoctors: "هیچ دکتری موجود نیست.",
+                noMessages: "هیچ پیامی وجود ندارد.",
+                noSentDocRequests: "هیچ درخواستی به دکتری ارسال نشده است.",
+                requestAccepted: "درخواست پذیرفته شد.",
+                requestToDocSent: "درخواست به دکتر ارسال شد."
+            },
+            en: {
+                dir: "ltr",
+                siteTitle: "Tourist Management System",
+                logout: "Logout",
+                dashboardTitle: "Representative Dashboard",
+                requestsLink: "Requests",
+                doctorsLink: "Doctors",
+                acceptedTouristsTitle: "Accepted Tourists",
+                touristRequestsTitle: "Tourists' Requests",
+                myDocRequestsTitle: "My Requests to Doctors",
+                doctorsTitle: "Doctors",
+                messagesTitle: "Messages",
+                contactAdminBtn: "Send Message to Admin",
+                msgSent: "Message sent to admin.",
+                noAcceptedTourists: "No tourists have been accepted.",
+                noRequests: "No requests available.",
+                noDoctors: "No doctors available.",
+                noMessages: "No messages available.",
+                noSentDocRequests: "No requests have been sent to any doctor.",
+                requestAccepted: "Request accepted.",
+                requestToDocSent: "Request sent to doctor."
+            }
+        };
+
+        function setLanguage(lang) {
+            localStorage.setItem("lang", lang);
+            const t = translations[lang];
+
+            document.documentElement.lang = lang;
+            document.body.setAttribute("dir", t.dir);
+            document.body.dataset.lang = lang;
+
+            document.getElementById("site-title").textContent = t.siteTitle;
+            document.getElementById("logout-link").textContent = t.logout;
+            document.getElementById("dashboard-title").textContent = t.dashboardTitle;
+            document.getElementById("requests-link").textContent = t.requestsLink;
+            document.getElementById("doctors-link").textContent = t.doctorsLink;
+            document.getElementById("accepted-tourists-title").textContent = t.acceptedTouristsTitle;
+            document.getElementById("tourist-requests-title").textContent = t.touristRequestsTitle;
+            document.getElementById("my-doc-requests-title").textContent = t.myDocRequestsTitle;
+            document.getElementById("doctors-title").textContent = t.doctorsTitle;
+            document.getElementById("messages-title").textContent = t.messagesTitle;
+            document.getElementById("contact-admin-btn").textContent = t.contactAdminBtn;
+
+            document.getElementById("btn-fa").classList.toggle("bg-green-800", lang === "fa");
+            document.getElementById("btn-en").classList.toggle("bg-green-800", lang === "en");
+        }
+
+        document.getElementById("btn-fa").addEventListener("click", () => setLanguage("fa"));
+        document.getElementById("btn-en").addEventListener("click", () => setLanguage("en"));
+
+        document.addEventListener("DOMContentLoaded", () => {
+            const savedLang = localStorage.getItem("lang") || "fa";
+            setLanguage(savedLang);
+        });
+
+        function contactAdmin() {
+            const lang = document.body.dataset.lang;
+            alert(translations[lang].msgSent);
+        }
+    </script>
+
+    <script src="/rep-script.js"></script>
+</body>
+</html>

@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#10B981" />
+    <title>درخواست‌ها</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="/styles.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans">
+    <nav class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-semibold" id="site-title">سیستم مدیریت توریست</h1>
+            <div class="flex space-x-4 space-x-reverse">
+                <a href="/dashboard-representative.html" class="hover:bg-green-700 px-3 py-2 rounded" id="nav-dashboard">داشبورد</a>
+                <a href="/doctors.html" class="hover:bg-green-700 px-3 py-2 rounded" id="nav-doctors">دکترها</a>
+                <a href="/messages.html" class="hover:bg-green-700 px-3 py-2 rounded" id="nav-messages">پیام‌ها</a>
+                <a href="/" class="hover:bg-red-700 px-3 py-2 rounded" id="nav-logout">خروج</a>
+                <a href="#" class="hover:bg-green-700 px-3 py-2 rounded" id="nav-lang-switch">EN</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold text-green-800 mb-6 text-center" id="page-title">درخواست‌ها</h2>
+        <section>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" id="section-title">درخواست‌های توریست‌ها</h3>
+                <ul id="requests-list" class="space-y-2"></ul>
+            </div>
+        </section>
+    </div>
+    <script>
+        // تشخیص زبان صفحه (lang query param)
+        function getLang() {
+            const params = new URLSearchParams(window.location.search);
+            const l = params.get('lang');
+            if (l && (l === 'fa' || l === 'en')) return l;
+            return 'fa'; // پیش‌فرض فارسی
+        }
+
+        const lang = getLang();
+
+        const translations = {
+            fa: {
+                siteTitle: 'سیستم مدیریت توریست',
+                navDashboard: 'داشبورد',
+                navDoctors: 'دکترها',
+                navMessages: 'پیام‌ها',
+                navLogout: 'خروج',
+                navLangSwitch: 'EN',
+                pageTitle: 'درخواست‌ها',
+                sectionTitle: 'درخواست‌های توریست‌ها'
+            },
+            en: {
+                siteTitle: 'Tourist Management System',
+                navDashboard: 'Dashboard',
+                navDoctors: 'Doctors',
+                navMessages: 'Messages',
+                navLogout: 'Logout',
+                navLangSwitch: 'FA',
+                pageTitle: 'Requests',
+                sectionTitle: 'Tourist Requests'
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const t = translations[lang];
+
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+
+            document.title = t.pageTitle;
+
+            document.getElementById('site-title').textContent = t.siteTitle;
+            document.getElementById('nav-dashboard').textContent = t.navDashboard;
+            document.getElementById('nav-doctors').textContent = t.navDoctors;
+            document.getElementById('nav-messages').textContent = t.navMessages;
+            document.getElementById('nav-logout').textContent = t.navLogout;
+            const langSwitch = document.getElementById('nav-lang-switch');
+            langSwitch.textContent = t.navLangSwitch;
+
+            // تغییر لینک تغییر زبان (فقط تغییر پارامتر lang)
+            const currentUrl = new URL(window.location.href);
+            if (lang === 'fa') {
+                currentUrl.searchParams.set('lang', 'en');
+            } else {
+                currentUrl.searchParams.set('lang', 'fa');
+            }
+            langSwitch.href = currentUrl.toString();
+
+            document.getElementById('page-title').textContent = t.pageTitle;
+            document.getElementById('section-title').textContent = t.sectionTitle;
+        });
+    </script>
+    <script src="/rep-script.js"></script>
+</body>
+</html>

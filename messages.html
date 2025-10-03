@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#10B981" />
+    <title>پیام‌ها</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="/styles.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans">
+    <nav class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-semibold">سیستم مدیریت توریست</h1>
+            <div class="flex space-x-4 space-x-reverse">
+                <a href="/dashboard-admin.html" class="hover:bg-green-700 px-3 py-2 rounded">داشبورد</a>
+                <a href="/connections.html" class="hover:bg-green-700 px-3 py-2 rounded">ارتباطات</a>
+                <a href="/users-list.html" class="hover:bg-green-700 px-3 py-2 rounded">لیست کاربران</a>
+                <a href="/" class="hover:bg-red-700 px-3 py-2 rounded">خروج</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold text-green-800 mb-6 text-center">پیام‌ها</h2>
+        <section>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <div id="messagesList" class="space-y-4"></div>
+            </div>
+        </section>
+    </div>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || (user.role !== 'admin' && user.role !== 'subadmin')) {
+                alert('دسترسی غیرمجاز');
+                window.location.href = '/';
+                return;
+            }
+
+            fetch(`/get-all-messages?user=${encodeURIComponent(JSON.stringify(user))}`)
+                .then(response => {
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok');
+                    }
+                    return response.json();
+                })
+                .then(data => {
+                    const list = document.getElementById('messagesList');
+                    list.innerHTML = '';
+                    data.forEach(msg => {
+                        const div = document.createElement('div');
+                        div.classList.add('bg-gray-50', 'p-4', 'rounded-lg', 'shadow-sm');
+                        div.innerHTML = `
+                            <p class="font-bold">از: ${msg.senderName} (${msg.senderRole})</p>
+                            <p>پیام: ${msg.message}</p>
+                            <p>پاسخ: ${msg.reply || 'بدون پاسخ'}</p>
+                            <input type="text" id="reply-${msg.id}" class="w-full p-2 border rounded mt-2" placeholder="پاسخ را وارد کنید" />
+                            <button onclick="replyMessage(${msg.id})" class="bg-green-600 text-white px-4 py-2 rounded mt-2 hover:bg-green-700">ارسال پاسخ</button>
+                        `;
+                        list.appendChild(div);
+                    });
+                })
+                .catch(err => {
+                    console.error('Error loading messages:', err);
+                    alert('خطا در بارگذاری پیام‌ها.');
+                });
+        });
+
+        function replyMessage(msgId) {
+            const replyInput = document.getElementById(`reply-${msgId}`);
+            const reply = replyInput.value.trim();
+            if (!reply) {
+                alert('پاسخ نمی‌تواند خالی باشد.');
+                return;
+            }
+
+            fetch('/reply-to-message', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ msgId, reply })
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    alert('پاسخ ارسال شد.');
+                    location.reload();
+                } else {
+                    alert('خطا در ارسال پاسخ: ' + data.error);
+                }
+            })
+            .catch(err => {
+                console.error('Error sending reply:', err);
+                alert('خطا در ارتباط با سرور.');
+            });
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#10B981" />
+    <title data-lang-fa="انتخاب نماینده" data-lang-en="Select Representative">انتخاب نماینده</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="/styles.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans">
+    <nav class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-semibold" data-lang-fa="سیستم مدیریت توریست" data-lang-en="Tourist Management System">سیستم مدیریت توریست</h1>
+            <div class="flex space-x-4 space-x-reverse">
+                <a href="/dashboard-tourist.html" class="hover:bg-green-700 px-3 py-2 rounded" data-lang-fa="داشبورد" data-lang-en="Dashboard">داشبورد</a>
+                <a href="/messages.html" class="hover:bg-green-700 px-3 py-2 rounded" data-lang-fa="پیام‌ها" data-lang-en="Messages">پیام‌ها</a>
+                <a href="/" class="hover:bg-red-700 px-3 py-2 rounded" data-lang-fa="خروج" data-lang-en="Logout">خروج</a>
+            </div>
+        </div>
+    </nav>
+    <div class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold text-green-800 mb-6 text-center" data-lang-fa="انتخاب نماینده" data-lang-en="Select Representative">انتخاب نماینده</h2>
+        <section class="mb-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" data-lang-fa="فیلتر نمایندگان" data-lang-en="Filter Representatives">فیلتر نمایندگان</h3>
+                <form id="filterForm" class="space-y-4">
+                    <div>
+                        <label for="touristLat" class="block text-gray-700" data-lang-fa="موقعیت شما (عرض جغرافیایی):" data-lang-en="Your Location (Latitude):">موقعیت شما (عرض جغرافیایی):</label>
+                        <input type="number" id="touristLat" step="any" class="w-full p-2 border rounded" required />
+                    </div>
+                    <div>
+                        <label for="touristLng" class="block text-gray-700" data-lang-fa="موقعیت شما (طول جغرافیایی):" data-lang-en="Your Location (Longitude):">موقعیت شما (طول جغرافیایی):</label>
+                        <input type="number" id="touristLng" step="any" class="w-full p-2 border rounded" required />
+                    </div>
+                    <div>
+                        <label for="maxDistance" class="block text-gray-700" data-lang-fa="حداکثر فاصله (کیلومتر):" data-lang-en="Maximum Distance (km):">حداکثر فاصله (کیلومتر):</label>
+                        <input type="number" id="maxDistance" class="w-full p-2 border rounded" value="50" />
+                    </div>
+                    <div>
+                        <label for="gender" class="block text-gray-700" data-lang-fa="جنسیت:" data-lang-en="Gender:">جنسیت:</label>
+                        <select id="gender" class="w-full p-2 border rounded">
+                            <option value="" data-lang-fa="همه" data-lang-en="All">همه</option>
+                            <option value="male" data-lang-fa="مرد" data-lang-en="Male">مرد</option>
+                            <option value="female" data-lang-fa="زن" data-lang-en="Female">زن</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label for="maxAge" class="block text-gray-700" data-lang-fa="حداکثر سن:" data-lang-en="Maximum Age:">حداکثر سن:</label>
+                        <input type="number" id="maxAge" class="w-full p-2 border rounded" />
+                    </div>
+                    <div>
+                        <label for="minExperience" class="block text-gray-700" data-lang-fa="حداقل سال‌های تجربه:" data-lang-en="Minimum Years of Experience:">حداقل سال‌های تجربه:</label>
+                        <input type="number" id="minExperience" class="w-full p-2 border rounded" />
+                    </div>
+                    <div>
+                        <label for="minRating" class="block text-gray-700" data-lang-fa="حداقل امتیاز (1-5):" data-lang-en="Minimum Rating (1-5):">حداقل امتیاز (1-5):</label>
+                        <input type="number" id="minRating" min="1" max="5" class="w-full p-2 border rounded" />
+                    </div>
+                    <div>
+                        <label for="status" class="block text-gray-700" data-lang-fa="وضعیت:" data-lang-en="Status:">وضعیت:</label>
+                        <select id="status" class="w-full p-2 border rounded">
+                            <option value="" data-lang-fa="همه" data-lang-en="All">همه</option>
+                            <option value="online" data-lang-fa="آنلاین" data-lang-en="Online">آنلاین</option>
+                            <option value="offline" data-lang-fa="آفلاین" data-lang-en="Offline">آفلاین</option>
+                        </select>
+                    </div>
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full" data-lang-fa="جستجو" data-lang-en="Search">جستجو</button>
+                </form>
+            </div>
+        </section>
+        <section>
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" data-lang-fa="نمایندگان موجود" data-lang-en="Available Representatives">نمایندگان موجود</h3>
+                <ul id="repsList" class="space-y-2"></ul>
+            </div>
+        </section>
+        <section class="mt-6">
+            <div class="bg-white rounded-lg shadow-md p-6">
+                <h3 class="text-lg font-semibold text-green-800 mb-4" data-lang-fa="ارسال درخواست به نماینده" data-lang-en="Send Request to Representative">ارسال درخواست به نماینده</h3>
+                <form id="requestForm" class="space-y-4">
+                    <div>
+                        <label for="repId" class="block text-gray-700" data-lang-fa="نماینده:" data-lang-en="Representative:">نماینده:</label>
+                        <select id="repId" class="w-full p-2 border rounded" required>
+                            <option value="" data-lang-fa="یک نماینده انتخاب کنید" data-lang-en="Select a representative">یک نماینده انتخاب کنید</option>
+                        </select>
+                    </div>
+                    <div class="flex space-x-4 space-x-reverse">
+                        <button type="button" onclick="window.location.href='/dashboard-tourist.html'" class="bg-gray-600 text-white px-4 py-2 rounded hover:bg-gray-700 w-full" data-lang-fa="لغو" data-lang-en="Cancel">لغو</button>
+                        <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full" data-lang-fa="ارسال" data-lang-en="Send">ارسال</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        // تغییر زبان صفحه با توجه به پارامتر URL lang=fa یا lang=en
+        function setLanguage(lang) {
+            document.documentElement.lang = lang;
+            document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
+
+            document.querySelectorAll('[data-lang-fa]').forEach(el => {
+                if(el.tagName.toLowerCase() === 'title') {
+                    document.title = (lang === 'fa') ? el.getAttribute('data-lang-fa') : el.getAttribute('data-lang-en');
+                } else {
+                    el.textContent = (lang === 'fa') ? el.getAttribute('data-lang-fa') : el.getAttribute('data-lang-en');
+                }
+            });
+        }
+
+        const urlParams = new URLSearchParams(window.location.search);
+        const lang = urlParams.get('lang') || 'fa';
+        setLanguage(lang);
+
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || user.role !== 'tourist') {
+                alert(lang === 'fa' ? 'دسترسی غیرمجاز' : 'Unauthorized access');
+                window.location.href = '/';
+                return;
+            }
+
+            // ارسال درخواست فیلتر و نمایش نمایندگان
+            document.getElementById('filterForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+
+                const touristLat = document.getElementById('touristLat').value;
+                const touristLng = document.getElementById('touristLng').value;
+                const maxDistance = document.getElementById('maxDistance').value;
+                const gender = document.getElementById('gender').value;
+                const maxAge = document.getElementById('maxAge').value;
+                const minExperience = document.getElementById('minExperience').value;
+                const minRating = document.getElementById('minRating').value;
+                const status = document.getElementById('status').value;
+
+                fetch(`/get-nearby-representatives?touristLat=${touristLat}&touristLng=${touristLng}&maxDistance=${maxDistance}`)
+                    .then(res => res.json())
+                    .then(data => {
+                        const repsList = document.getElementById('repsList');
+                        const repSelect = document.getElementById('repId');
+                        repsList.innerHTML = '';
+                        repSelect.innerHTML = `<option value="">${lang === 'fa' ? 'یک نماینده انتخاب کنید' : 'Select a representative'}</option>`;
+
+                        // فیلتر داده‌ها بر اساس فرم
+                        const filteredData = data.filter(rep => {
+                            return (!gender || rep.gender === gender) &&
+                                (!maxAge || rep.age <= maxAge) &&
+                                (!minExperience || rep.experience_years >= minExperience) &&
+                                (!minRating || rep.rating >= minRating) &&
+                                (!status || (status === 'online' ? rep.online_status.toLowerCase() === (lang === 'fa' ? 'آنلاین' : 'online') : rep.online_status.toLowerCase() === (lang === 'fa' ? 'آفلاین' : 'offline')));
+                        });
+
+                        if(filteredData.length === 0){
+                            repsList.innerHTML = `<li class="text-gray-500">${lang === 'fa' ? 'هیچ نماینده‌ای یافت نشد.' : 'No representatives found.'}</li>`;
+                        } else {
+                            filteredData.forEach(rep => {
+                                const li = document.createElement('li');
+                                li.className = 'p-4 bg-gray-50 rounded-lg';
+                                li.innerHTML = `
+                                    <strong>${lang === 'fa' ? 'نام:' : 'Name:'}</strong> ${rep.name}<br />
+                                    <strong>${lang === 'fa' ? 'جنسیت:' : 'Gender:'}</strong> ${rep.gender}<br />
+                                    <strong>${lang === 'fa' ? 'سن:' : 'Age:'}</strong> ${rep.age}<br />
+                                    <strong>${lang === 'fa' ? 'تجربه:' : 'Experience:'}</strong> ${rep.experience_years} ${lang === 'fa' ? 'سال' : 'years'}<br />
+                                    <strong>${lang === 'fa' ? 'امتیاز:' : 'Rating:'}</strong> ${rep.rating}<br />
+                                    <strong>${lang === 'fa' ? 'وضعیت:' : 'Status:'}</strong> ${rep.online_status}<br />
+                                    <strong>${lang === 'fa' ? 'تلفن:' : 'Phone:'}</strong> ${rep.phone}<br />
+                                    <strong>${lang === 'fa' ? 'آدرس:' : 'Address:'}</strong> ${rep.address}
+                                `;
+                                repsList.appendChild(li);
+
+                                const option = document.createElement('option');
+                                option.value = rep.id;
+                                option.textContent = rep.name;
+                                repSelect.appendChild(option);
+                            });
+                        }
+                    })
+                    .catch(err => {
+                        console.error('Error loading representatives:', err);
+                        alert(lang === 'fa' ? 'خطا در بارگذاری نمایندگان.' : 'Error loading representatives.');
+                    });
+            });
+
+            // ارسال درخواست انتخاب نماینده
+            document.getElementById('requestForm').addEventListener('submit', function(e) {
+                e.preventDefault();
+                const repId = document.getElementById('repId').value;
+                if (!repId) {
+                    alert(lang === 'fa' ? 'لطفا یک نماینده را انتخاب کنید.' : 'Please select a representative.');
+                    return;
+                }
+
+                // نمونه ارسال درخواست به سرور (شبیه سازی)
+                fetch('/send-request-to-rep', {
+                    method: 'POST',
+                    headers: {'Content-Type': 'application/json'},
+                    body: JSON.stringify({
+                        touristId: user.id,
+                        repId: repId
+                    })
+                })
+                .then(res => {
+                    if (res.ok) {
+                        alert(lang === 'fa' ? 'درخواست با موفقیت ارسال شد.' : 'Request sent successfully.');
+                        window.location.href = '/dashboard-tourist.html';
+                    } else {
+                        alert(lang === 'fa' ? 'خطا در ارسال درخواست.' : 'Error sending request.');
+                    }
+                })
+                .catch(() => {
+                    alert(lang === 'fa' ? 'خطا در ارسال درخواست.' : 'Error sending request.');
+                });
+            });
+        });
+    </script>
+</body>
+</html>

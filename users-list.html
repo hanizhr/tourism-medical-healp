@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#10B981" />
+    <title>لیست کاربران / Users List</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="/styles.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans">
+    <!-- نوار بالا -->
+    <nav id="navbar" class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 id="nav-title" class="text-lg md:text-xl font-semibold">سیستم مدیریت توریست</h1>
+            <div id="nav-links" class="hidden sm:flex space-x-4 space-x-reverse">
+                <a href="/dashboard-admin.html" class="hover:bg-green-700 px-3 py-2 rounded">داشبورد</a>
+                <a href="/connections.html" class="hover:bg-green-700 px-3 py-2 rounded">ارتباطات</a>
+                <a href="/messages.html" class="hover:bg-green-700 px-3 py-2 rounded">پیام‌ها</a>
+                <a href="/" class="hover:bg-red-700 px-3 py-2 rounded">خروج</a>
+            </div>
+        </div>
+    </nav>
+
+    <!-- محتوای اصلی -->
+    <div class="container mx-auto p-4 md:p-6">
+        <h2 id="page-title" class="text-xl md:text-2xl font-semibold text-green-800 mb-4 text-center">لیست کاربران</h2>
+        
+        <section>
+            <div class="bg-white rounded-lg shadow-md p-4 md:p-6">
+                <!-- جدول در دسکتاپ -->
+                <div class="hidden md:block overflow-x-auto">
+                    <table id="usersTable" class="w-full text-right border-collapse">
+                        <thead>
+                            <tr class="bg-gray-100">
+                                <th class="p-2">نام</th>
+                                <th class="p-2">نام خانوادگی</th>
+                                <th class="p-2">ایمیل</th>
+                                <th class="p-2">شماره همراه</th>
+                                <th class="p-2">نقش</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersList" class="divide-y"></tbody>
+                    </table>
+                </div>
+
+                <!-- کارت‌ها در موبایل -->
+                <div id="usersCards" class="block md:hidden space-y-4"></div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            const lang = urlParams.get('lang') === 'en' ? 'en' : 'fa';
+
+            const texts = {
+                navTitle: { fa: 'سیستم مدیریت توریست', en: 'Tourist Management System' },
+                pageTitle: { fa: 'لیست کاربران', en: 'Users List' },
+                tableHeaders: {
+                    firstName: { fa: 'نام', en: 'First Name' },
+                    lastName: { fa: 'نام خانوادگی', en: 'Last Name' },
+                    email: { fa: 'ایمیل', en: 'Email' },
+                    mobile: { fa: 'شماره همراه', en: 'Mobile' },
+                    role: { fa: 'نقش', en: 'Role' }
+                },
+                noUsersFound: { fa: 'هیچ کاربری یافت نشد.', en: 'No users found.' },
+                loadError: { fa: 'خطا در بارگذاری کاربران.', en: 'Error loading users.' },
+                noAccessAlert: { fa: 'دسترسی غیرمجاز', en: 'Unauthorized access' }
+            };
+
+            document.getElementById('nav-title').textContent = texts.navTitle[lang];
+            document.getElementById('page-title').textContent = texts.pageTitle[lang];
+
+            const theadCells = document.querySelectorAll('#usersTable thead th');
+            theadCells[0].textContent = texts.tableHeaders.firstName[lang];
+            theadCells[1].textContent = texts.tableHeaders.lastName[lang];
+            theadCells[2].textContent = texts.tableHeaders.email[lang];
+            theadCells[3].textContent = texts.tableHeaders.mobile[lang];
+            theadCells[4].textContent = texts.tableHeaders.role[lang];
+
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user || (user.role !== 'admin' && user.role !== 'subadmin')) {
+                alert(texts.noAccessAlert[lang]);
+                window.location.href = '/';
+                return;
+            }
+
+            fetch(`/get-all-users?user=${encodeURIComponent(JSON.stringify(user))}`)
+                .then(response => response.json())
+                .then(data => {
+                    const tbody = document.getElementById('usersList');
+                    const cards = document.getElementById('usersCards');
+                    tbody.innerHTML = '';
+                    cards.innerHTML = '';
+
+                    if (data.length === 0) {
+                        tbody.innerHTML = `<tr><td colspan="5" class="p-2 text-gray-500 text-center">${texts.noUsersFound[lang]}</td></tr>`;
+                        cards.innerHTML = `<p class="text-gray-500 text-center">${texts.noUsersFound[lang]}</p>`;
+                    } else {
+                        data.forEach(user => {
+                            // جدول دسکتاپ
+                            const tr = document.createElement('tr');
+                            tr.innerHTML = `
+                                <td class="p-2">${user.first_name}</td>
+                                <td class="p-2">${user.last_name}</td>
+                                <td class="p-2">${user.email}</td>
+                                <td class="p-2">${user.mobile}</td>
+                                <td class="p-2">${user.role}</td>
+                            `;
+                            tbody.appendChild(tr);
+
+                            // کارت موبایل
+                            const card = document.createElement('div');
+                            card.className = "border rounded-lg shadow-sm p-3 bg-gray-50";
+                            card.innerHTML = `
+                                <p><strong>${texts.tableHeaders.firstName[lang]}:</strong> ${user.first_name}</p>
+                                <p><strong>${texts.tableHeaders.lastName[lang]}:</strong> ${user.last_name}</p>
+                                <p><strong>${texts.tableHeaders.email[lang]}:</strong> ${user.email}</p>
+                                <p><strong>${texts.tableHeaders.mobile[lang]}:</strong> ${user.mobile}</p>
+                                <p><strong>${texts.tableHeaders.role[lang]}:</strong> ${user.role}</p>
+                            `;
+                            cards.appendChild(card);
+                        });
+                    }
+                })
+                .catch(err => {
+                    console.error('Error loading users:', err);
+                    alert(texts.loadError[lang]);
+                });
+        });
+    </script>
+</body>
+</html>

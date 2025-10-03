@@ -1,0 +1,96 @@
+
+<!DOCTYPE html>
+<html lang="fa" dir="rtl">
+<head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#10B981" />
+    <title data-fa="ورود" data-en="Login">ورود</title>
+    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet" />
+    <link href="/styles.css" rel="stylesheet" />
+</head>
+<body class="bg-gray-100 font-sans">
+    <nav class="bg-green-600 text-white p-4 shadow-md sticky top-0 z-10">
+        <div class="container mx-auto flex justify-between items-center">
+            <h1 class="text-xl font-semibold" data-fa="سیستم مدیریت توریست" data-en="Tourist Management System">سیستم مدیریت توریست</h1>
+            <div class="flex space-x-4 space-x-reverse items-center">
+                <a href="/register.html" class="hover:bg-green-700 px-3 py-2 rounded" data-fa="ثبت‌نام" data-en="Register">ثبت‌نام</a>
+                <button id="langToggle" class="bg-white text-green-600 px-3 py-1 rounded">EN</button>
+            </div>
+        </div>
+    </nav>
+    <div class="container mx-auto p-6">
+        <h2 class="text-2xl font-semibold text-green-800 mb-6 text-center" data-fa="ورود" data-en="Login">ورود</h2>
+        <section>
+            <div class="bg-white rounded-lg shadow-md p-6 max-w-md mx-auto">
+                <form id="loginForm" class="space-y-4">
+                    <div>
+                        <label for="identifier" class="block text-gray-700" data-fa="ایمیل یا شماره همراه:" data-en="Email or Phone:">ایمیل یا شماره همراه:</label>
+                        <input type="text" id="identifier" class="w-full p-2 border rounded" required />
+                    </div>
+                    <div>
+                        <label for="password" class="block text-gray-700" data-fa="پسورد:" data-en="Password:">پسورد:</label>
+                        <input type="password" id="password" class="w-full p-2 border rounded" required />
+                    </div>
+                    <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded hover:bg-green-700 w-full" data-fa="ورود" data-en="Login">ورود</button>
+                    <p class="mt-4 text-gray-600 text-center">
+                        <span data-fa="حساب کاربری ندارید؟" data-en="Don't have an account?">حساب کاربری ندارید؟</span>
+                        <a href="/register.html" class="text-green-600 hover:underline" data-fa="ثبت‌نام کنید" data-en="Register here">ثبت‌نام کنید</a>
+                    </p>
+                </form>
+            </div>
+        </section>
+    </div>
+    <script>
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const identifier = document.getElementById('identifier').value.trim();
+            const password = document.getElementById('password').value.trim();
+            fetch('/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ identifier, password })
+            })
+            .then(res => res.json())
+            .then(data => {
+                console.log('Login response:', data);
+                if (data.success) {
+                    localStorage.setItem('user', JSON.stringify(data.user));
+                    if (data.user.role) {
+                        window.location.href = `/dashboard-${data.user.role}.html`;
+                    } else {
+                        window.location.href = '/role-selection.html';
+                    }
+                } else {
+                    alert((lang === 'fa' ? 'خطا در ورود: ' : 'Login error: ') + (data.error || (lang === 'fa' ? 'مشکل ناشناخته' : 'Unknown issue')));
+                }
+            })
+            .catch(err => {
+                console.error('Error during login:', err);
+                alert(lang === 'fa' ? 'خطا در ارتباط با سرور.' : 'Server connection error.');
+            });
+        });
+
+        let lang = localStorage.getItem('lang') || 'fa';
+        const toggleBtn = document.getElementById('langToggle');
+
+        function updateLanguage() {
+            document.querySelectorAll('[data-fa]').forEach(el => {
+                el.textContent = el.getAttribute(`data-${lang}`);
+            });
+            document.documentElement.lang = lang;
+            document.documentElement.dir = lang === 'fa' ? 'rtl' : 'ltr';
+            toggleBtn.textContent = lang === 'fa' ? 'EN' : 'FA';
+        }
+
+        toggleBtn.addEventListener('click', () => {
+            lang = lang === 'fa' ? 'en' : 'fa';
+            localStorage.setItem('lang', lang);
+            updateLanguage();
+        });
+
+        updateLanguage();
+    </script>
+</body>
+</html>
+```
